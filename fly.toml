@@ -1,0 +1,45 @@
+app = "imitatio"
+kill_signal = "SIGINT"
+kill_timeout = 5
+processes = []
+
+[env]
+  JAVA_OPTS = '-Djboss.bind.address.private=127.0.0.1 -Djboss.bind.address=0.0.0.0 -Djava.net.preferIPv6Addresses=true'
+
+  KC_DB = "postgres"
+  # KC_DB_URL_DATABASE = "SECRET"
+  # KC_DB_URL_HOST = "SECRET"
+  # KC_DB_USERNAME = "SECRET"
+  # KC_DB_PASSWORD = "SECRET"
+
+  KC_HOSTNAME_STRICT = "false"
+  KC_HTTP_ENABLED = "true"
+  KC_PROXY = "edge"
+  PROXY_ADDRESS_FORWARDING = "true"
+
+  # first time login
+  KEYCLOAK_ADMIN = "admin"
+  KEYCLOAK_ADMIN_PASSWORD = "admin"
+
+[experimental]
+  cmd = ["start", "--cache=ispn", "--cache-config-file=flyio-cache-config.xml"]
+
+[[services]]
+  internal_port = 8080
+  protocol = "tcp"
+
+  [services.concurrency]
+    hard_limit = 1000
+    soft_limit = 200
+    type = "connections"
+
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443
+
+  [[services.tcp_checks]]
+    grace_period = "1s"
+    interval = "15s"
+    restart_limit = 0
+    timeout = "2s"
+
